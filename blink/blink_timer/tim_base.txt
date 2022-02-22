@@ -1,0 +1,9 @@
+tim clk=48MHz
+
+count every us
+
+1 pwm cycle every 65535us = 65.5ms
+
+0 < ARR < 65535; step = 100 -> 65.5 total cycles
+
+65535 pwm cycles = 1 fade --> 65.5 * 65.5ms
