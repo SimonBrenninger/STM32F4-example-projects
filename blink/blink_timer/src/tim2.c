@@ -18,7 +18,7 @@ void TIM2Config(void)
 	TIM2->CR1 &= ~TIM_CR1_CEN;
 
 	// timer clocked @ 48MHz
-	// set prescaler to 48k --> count every ms 65535
+	// set prescaler to 48k --> count every ms
 	TIM2->PSC = 48000;	// 48.000
 	TIM2->ARR = 1000;	// count to 1000 (interrupt every 1000ms)
 

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "header.h"
 
 int main(void)
@@ -9,7 +10,7 @@ int main(void)
 	USARTConfig();
 
 	// print hello world message
-	//USART1_SendString("Hi\r\n");
+	USART1_SendString("\n\rHello World!\n\r");
 
 	while(1)
 	{
@@ -28,9 +29,10 @@ int main(void)
  * Bugs resolved:
  * in rcc.c: RCCConfig: flash latency not set (cpu clock 2fast for flash)
  * in usart.c: USARTConfig: usart receive and transmit functions for wrong peripheral (USART2)
+ * in usart.c: USART1_SendString: first character got overwritten by second character
+ * 			   (didn't check if transmit data register was empty (USART_SR_TXE))
  * 
  * ToDo:
- * when using SendString first character does not get printed over UART
  * and Error: "Starting execution at address 0x08000000... Got byte 0x00 instead of ACK
  * failed." occurs.
  * implement own printf() function.

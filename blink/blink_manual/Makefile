@@ -5,8 +5,8 @@ BUILD_DIR = build
 
 # Source files
 C_SOURCES  = src/main.c
-C_SOURCES += src/system_stm32f4xx.c
-ASM_SOURCES = startup_stm32f411xe.s
+C_SOURCES += drivers/src/system_stm32f4xx.c
+ASM_SOURCES = drivers/src/startup_stm32f411xe.s
 
 PREFIX = arm-none-eabi-
 CC = $(PREFIX)gcc
@@ -26,8 +26,7 @@ C_DEFS =  \
 # C includes
 C_INCLUDES = \
 -Iinc \
--IDrivers/CMSIS/Core/Include \
--IDrivers/CMSIS/Device/ST/STM32F4xx/Include
+-Idrivers/inc
 
 CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -Og -Wall -fdata-sections -ffunction-sections
 
@@ -85,7 +84,7 @@ clean:
 	-rm -fR $(BUILD_DIR)
 
 flash-serial: all
-	stm32flash -w build/blink.bin -v -g 0x0 /dev/ttyUSB0
+	stm32flash -w build/$(TARGET).bin -v -g 0x0 /dev/ttyUSB0
 
 flash-usb: all
-	dfu-util -a 0 -d 0483:df11 -D build/blink.bin -s 0x08000000:leave -R
+	dfu-util -a 0 -d 0483:df11 -D build/$(TARGET).bin -s 0x08000000:leave -R

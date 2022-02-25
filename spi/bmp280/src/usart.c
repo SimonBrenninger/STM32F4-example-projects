@@ -23,17 +23,16 @@ char USART1_RX(void)
 
 void USART1_TX(char c)
 {
-    // wait until transmit data register is empty
-    while(!(USART1->SR & USART_SR_TXE));
-
     // write byte into data register DR
     USART1->DR = c;
 
     // wait until transmission is completed
     while(!(USART1->SR & USART_SR_TC));
 
-    // toggle dbg led to indicate byte was transmitted
-    GPIOC->ODR ^= GPIO_ODR_OD13;
+    if(USART1->SR & USART_SR_TC)
+    {
+        GPIOC->ODR ^= GPIO_ODR_OD13;
+    }
 }
 
 void USARTConfig(void)
