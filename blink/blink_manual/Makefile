@@ -35,7 +35,7 @@ CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -Og -Wall -fdata-sections -ffunction-sec
 # LDFLAGS
 #######################################
 # link script
-LDSCRIPT = STM32F411CEUx_FLASH.ld
+LDSCRIPT = drivers/ld/STM32F411CEUx_FLASH.ld
 
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 

@@ -7,6 +7,7 @@ BUILD_DIR = build
 C_SOURCES  = src/main.c
 C_SOURCES += src/rcc.c
 C_SOURCES += src/gpio.c
+C_SOURCES += src/spi.c
 C_SOURCES += src/usart.c
 C_SOURCES += drivers/src/system_stm32f4xx.c
 ASM_SOURCES = drivers/src/startup_stm32f411xe.s
@@ -38,7 +39,7 @@ CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -Og -Wall -fdata-sections -ffunction-sec
 # LDFLAGS
 #######################################
 # link script
-LDSCRIPT = STM32F411CEUx_FLASH.ld
+LDSCRIPT = drivers/ld/STM32F411CEUx_FLASH.ld
 
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 

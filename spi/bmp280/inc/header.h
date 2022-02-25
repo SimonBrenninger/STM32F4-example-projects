@@ -6,6 +6,7 @@
 void RCCConfig(void);
 void GPIOConfig(void);
 void USARTConfig(void);
+void SPIConfig(void);
 char USART1_RX(void);
 void USART1_TX(char c);
 void USART1_SendString(char *str);

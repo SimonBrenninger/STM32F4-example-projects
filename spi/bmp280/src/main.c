@@ -2,10 +2,9 @@
 
 int main(void)
 {
-	char recv;
-
 	RCCConfig();
 	GPIOConfig();
+	SPIConfig();
 	USARTConfig();
 
 	while(1)
