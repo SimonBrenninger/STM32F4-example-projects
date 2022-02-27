@@ -3,7 +3,7 @@
 ## Description
 
 This example uses STMicroelectronics STM32F411CE Microcontroller on a custom devboard.
-SPI1 (at baudrate 115200, 8 data bits, no parity bit, 1 stop bits) configured in polling mode echoes the received data back.
+A Software-SPI interface is used to communicate with the temperature and pressure sensor BMP280.
 
 ## Usage
 
