@@ -10,6 +10,43 @@ void USART1_SendString(char *str)
     }
 }
 
+void USART1_SendHex(uint8_t val)
+{
+    uint8_t idx;
+    char ch = '0';
+
+    // loop through first half of byte
+    idx = 0x10;
+    while(idx != 0x00)
+    {
+        if(val & idx)
+        {
+            ch += (idx >> 4);
+        }
+        idx <<= 1;
+    }
+    if(ch > '9')
+        ch = 'A' + (ch-'9' - 1);
+    // print first character
+    USART1_TX(ch);
+
+    ch = '0';
+    // loop through second half of byte
+    idx = 0x01;
+    while(idx != 0x10)
+    {
+        if(val & idx)
+        {
+            ch += idx;
+        }
+        idx <<= 1;
+    }
+    if(ch > '9')
+        ch = 'A' + (ch-'9' - 1);
+    // print second character
+    USART1_TX(ch);
+}
+
 char USART1_RX(void)
 {
     char c;
@@ -23,6 +60,9 @@ char USART1_RX(void)
 
 void USART1_TX(char c)
 {
+    // wait until DR is empty
+    while(!(USART1->SR & USART_SR_TXE));
+
     // write byte into data register DR
     USART1->DR = c;
 
@@ -37,7 +77,7 @@ void USART1_TX(char c)
 
 void USARTConfig(void)
 {
-    // enable USART1 clock (100MHz)
+    // enable USART1 clock (48,8kHz)
     RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
 
     // enable USART1
@@ -54,19 +94,19 @@ void USARTConfig(void)
      * 
      * baud = f / (8 * (2-OVER8) * USARTDIV)
      * USARTDIV = f / (8 * (2-OVER8) * baud)
-     * USARTDIV = 100MHz / 8 * (2-0) * 115200)
-     * USARTDIV = 54,25
+     * USARTDIV = 48,8kHz / (8 * (2-0) * 9600)
+     * USARTDIV = 122,07
      * 
-     * Mantissa = 0d54 = 0x36
-     * Fraction = 0d0.25 * 16 = 0d4 = 0x4
+     * Mantissa = 0d122 = 0x7A
+     * Fraction = 0d0.07 * 16 = 0d1 = 0x01
      */
 
     // set mantissa
     USART1->BRR &= ~USART_BRR_DIV_Mantissa_Msk;
-    USART1->BRR |= (0x36 << USART_BRR_DIV_Mantissa_Pos);
+    USART1->BRR |= (0x02 << USART_BRR_DIV_Mantissa_Pos);//2
     // set fraction
     USART1->BRR &= ~USART_BRR_DIV_Fraction_Msk;
-    USART1->BRR |= (0x04 << USART_BRR_DIV_Fraction_Pos);
+    USART1->BRR |= (0x09 << USART_BRR_DIV_Fraction_Pos);//9
     // enable RX and TX
     USART1->CR1 |= (USART_CR1_RE | USART_CR1_TE);
 }
