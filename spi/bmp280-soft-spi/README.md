@@ -1,4 +1,4 @@
-# STM32F4 SPI BMP280 example
+# STM32F4 Soft-SPI BMP280 example
 
 ## Description
 
