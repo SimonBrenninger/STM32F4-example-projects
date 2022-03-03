@@ -13,7 +13,7 @@ int main(void)
 	SPIConfig();
 	USARTConfig();
 
-	USART1_SendString("Hello World\n\r");
+	USART1_SendString("BMP280 soft-SPI Example\n\r");
 
 	uint8_t adr = 0x00, ret;
 
@@ -21,40 +21,28 @@ int main(void)
 
 	while(1)
 	{
-		// read temp and pressure periodically
-
-		// read from register 0xD0 (MSB 'RW' to '0' for reading)
-		adr |=  0xD0;	// set register address
-		adr &= ~0x80;	// set MSB to zero (read from device)
+		// read from register 0xD0 (chip_id register)
+		adr  = 0xD0;	// set register address
+		adr |= 0x80;	// set MSB (R/W) to one (read from device)
 
 		sleep(4000);
 
 		// start SPI communication
 		GPIOA->ODR &= ~SPI_CS;
 
-		sleep(1000);
-
 		// write to SPI device
 		sspi_write_byte(adr);
 
-		sleep(500);
-		GPIOC->ODR &= ~DBG_LED;
-		sleep(500);
-
-		// read content of address 0xD0
+		// read content of address 0xD0 (for BMP280 always 0x58)
 		ret = sspi_read_byte();
-
-		sleep(500);
-		GPIOC->ODR |= DBG_LED;
-		sleep(500);
 
 		// end SPI communication
 		GPIOA->ODR |= SPI_CS;
 
 		// send content of 0xD0 over USART
-		USART1_SendString("Read from BMP280: content of 0xD0 is: 0x");
+		USART1_SendString("Read from BMP280: content of 0xD0 (chip_id) is: 0x");
 		USART1_SendHex(ret);
-		USART1_SendString("\n\r");
+		USART1_SendString(" (normally 0x58)\n\r");
 		
 		sleep(2000);
 	}
@@ -64,8 +52,7 @@ int main(void)
  * Bugs resolved:
  * sleep: compiler optimized sleep function into endless loop
  * sspi_write_byte: condition in for loop never met
+ * spi.c: used wrong SPI configuration (CPHA=1 instead of CPHA=0)
  * 
  * ToDo:
- * correct GPIO speed
- * testing
  */

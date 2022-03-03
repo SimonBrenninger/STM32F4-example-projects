@@ -94,19 +94,19 @@ void USARTConfig(void)
      * 
      * baud = f / (8 * (2-OVER8) * USARTDIV)
      * USARTDIV = f / (8 * (2-OVER8) * baud)
-     * USARTDIV = 48,8kHz / (8 * (2-0) * 9600)
-     * USARTDIV = 122,07
+     * USARTDIV = 48,8kHz / (8 * (2-0) * 1191)
+     * USARTDIV = 2,562
      * 
-     * Mantissa = 0d122 = 0x7A
-     * Fraction = 0d0.07 * 16 = 0d1 = 0x01
+     * Mantissa = 0d2 = 0x02
+     * Fraction = 0d0,562 * 16 = 0d9 = 0x09
      */
 
     // set mantissa
     USART1->BRR &= ~USART_BRR_DIV_Mantissa_Msk;
-    USART1->BRR |= (0x02 << USART_BRR_DIV_Mantissa_Pos);//2
+    USART1->BRR |= (0x02 << USART_BRR_DIV_Mantissa_Pos);
     // set fraction
     USART1->BRR &= ~USART_BRR_DIV_Fraction_Msk;
-    USART1->BRR |= (0x09 << USART_BRR_DIV_Fraction_Pos);//9
+    USART1->BRR |= (0x09 << USART_BRR_DIV_Fraction_Pos);
     // enable RX and TX
     USART1->CR1 |= (USART_CR1_RE | USART_CR1_TE);
 }
