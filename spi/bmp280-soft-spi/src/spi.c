@@ -3,7 +3,7 @@
 /* BMP280 Soft-SPI:
  * SPI mode '00' & '11' supported (mode '00' is used)
  * ('00': clock idle = 0, sampling @ rising edge)
- * ('11': clock idle = 1, sampling @ falling edge)
+ * ('11': clock idle = 1, sampling @ rising edge)
  * SPI 3 & 4-wire (using 4-wire configuration)
  * 
  */

@@ -31,7 +31,7 @@ C_INCLUDES = \
 -Iinc \
 -Idrivers/inc
 
-CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -Og -Wall -fdata-sections -ffunction-sections
+CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -Og -g -Wall -fdata-sections -ffunction-sections
 
 
 #######################################

@@ -28,7 +28,7 @@ C_INCLUDES = \
 -Iinc \
 -Idrivers/inc
 
-CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -Og -Wall -fdata-sections -ffunction-sections
+CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -Og -g -Wall -fdata-sections -ffunction-sections
 
 
 #######################################
@@ -88,3 +88,6 @@ flash-serial: all
 
 flash-usb: all
 	dfu-util -a 0 -d 0483:df11 -D build/$(TARGET).bin -s 0x08000000:leave -R
+
+flash-stlink: all
+	st-flash write $(BUILD_DIR)/$(TARGET).bin 0x08000000
