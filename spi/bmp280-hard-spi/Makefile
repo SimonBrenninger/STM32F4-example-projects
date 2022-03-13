@@ -9,6 +9,7 @@ C_SOURCES += src/rcc.c
 C_SOURCES += src/gpio.c
 C_SOURCES += src/spi.c
 C_SOURCES += src/usart.c
+C_SOURCES += src/timer.c
 C_SOURCES += drivers/src/system_stm32f4xx.c
 ASM_SOURCES = drivers/src/startup_stm32f411xe.s
 

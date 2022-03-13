@@ -13,6 +13,7 @@ int main(void)
 	GPIOConfig();
 	SPIConfig();
 	USARTConfig();
+	TIMConfig();
 
 	USART1_SendString("BMP280 hard-SPI Example\n\r");
 
@@ -29,7 +30,7 @@ int main(void)
 
 	while(1)
 	{
-		
+		// do nothing
 	}
 }
 

@@ -6,7 +6,6 @@ void GPIOConfig(void)
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOCEN;
 
 	// configure SPI1 pins (CS: PA3, SCK: PA5, MISO: PA6, MOSI: PA7)
-
 	// configure SPI1 pins in AF Mode (0b10); PA3 in output mode (0b01)
 	GPIOA->MODER &= ~(GPIO_MODER_MODER3_Msk | 
 					  GPIO_MODER_MODER5_Msk |

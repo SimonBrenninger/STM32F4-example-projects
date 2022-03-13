@@ -20,6 +20,9 @@ void RCCConfig(void)
     RCC->CFGR &= ~RCC_CFGR_HPRE_Msk;
     RCC->CFGR |=  RCC_CFGR_HPRE_DIV1;
 
+    // set APB1 for (TIM5) to AHB clock (25MHz)
+    RCC->CFGR &= ~RCC_CFGR_PPRE1_Msk;
+    RCC->CFGR |=  RCC_CFGR_PPRE1_DIV1;
     
     // set APB2 (for USART1, SPI1) to AHB clock (25MHz)
     RCC->CFGR &= ~RCC_CFGR_PPRE2_Msk;

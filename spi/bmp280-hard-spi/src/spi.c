@@ -42,7 +42,7 @@ void SPIConfig(void)
  * disable SPI with SPE = 0 & disable SPI periph clock
 */
 
-void SPI1_Transmit(uint8_t byte)
+void SPI1_transmit(uint8_t byte)
 {
     // wait until previous transmition is finished (TX register empty)
     while(!(SPI1->SR & SPI_SR_TXE));
@@ -51,7 +51,7 @@ void SPI1_Transmit(uint8_t byte)
     SPI1->DR = byte;
 }
 
-uint8_t SPI1_Receive()
+uint8_t SPI1_receive(void)
 {
     uint8_t byte;
 
@@ -69,6 +69,39 @@ uint8_t SPI1_Receive()
     return byte;
 }
 
+uint8_t SPI1_read_byte(uint8_t addr)
+{
+    // transmit addr over SPI1 and return received data
+    SPI1_transmit(addr);
+    return SPI1_receive();
+}
+
+uint8_t *SPI1_read_bytes(uint8_t addr, uint8_t num_bytes)
+{
+    int num_allocd = 0;
+    uint8_t *data = malloc(0);
+
+    // first transmit starting address
+    SPI1_transmit(addr);
+
+    while(num_allocd < num_bytes)
+    {
+        data = realloc(data, ++num_allocd * sizeof(uint8_t));
+        data[num_allocd-1] = SPI1_receive();
+    }
+
+    //return byte-pointer
+    return data;
+}
+
+void SPI1_write_byte(uint8_t addr, uint8_t data)
+{
+    // transmit addr over SPI1 and write value of 'data'
+    // to given address
+    SPI1_transmit(addr);
+    SPI1_transmit(data);
+}
+
 uint8_t SPI1_BMP280_get_id(void)
 {
     // send command to transmit chip id (adress 0xD0)
@@ -78,16 +111,40 @@ uint8_t SPI1_BMP280_get_id(void)
     // begin SPI1 communication
     SPI1_start_communication();
 
-    SPI1_Transmit(0xD0);
-
     // get result from BMP280 sensor
-    chip_id = SPI1_Receive();
+    chip_id = SPI1_read_byte(chip_id);
 
     // end SPI1 communication
     SPI1_end_communication();
 
     // return value
     return chip_id;
+}
+
+void SPI1_BMP280_get_data(void)
+{
+    // start SPI communication
+    SPI1_start_communication();
+
+    SPI1_BMP280_get_temp();
+    SPI1_BMP280_get_press();
+
+    // end SPI communication
+    SPI1_end_communication();
+
+    // use calibration data to compute correct values
+
+    USART1_SendString("current temperature is: \n\r");
+}
+
+uint32_t SPI1_BMP280_get_temp(void)
+{
+
+}
+
+uint32_t SPI1_BMP280_get_press(void)
+{
+
 }
 
 void SPI1_start_communication(void)

@@ -1,6 +1,7 @@
 #ifndef HEADER_H_INCLUDED
 #define HEADER_H_INCLUDED
 
+#include <stdlib.h>
 #include "stm32f411xe.h"
 
 // pin definitons for SPI interface
@@ -12,17 +13,28 @@
 // pin definitions for debug led
 #define DBG_LED GPIO_ODR_OD13
 
+/*          prototypes            */
+
 // Configurations
 void RCCConfig(void);
 void GPIOConfig(void);
 void SPIConfig(void);
 void USARTConfig(void);
+void TIMConfig(void);
+
 // SPI specific functions
-void SPI1_Transmit(uint8_t byte);
-uint8_t SPI1_Receive(void);
+void SPI1_transmit(uint8_t byte);
+uint8_t SPI1_receive(void);
+uint8_t SPI1_read_byte(uint8_t addr);
+uint8_t *SPI1_read_bytes(uint8_t addr, uint8_t num_bytes);
+void SPI1_write_byte(uint8_t addr, uint8_t data);
 uint8_t SPI1_BMP280_get_id(void);
+void SPI1_BMP280_get_data(void);
+uint32_t SPI1_BMP280_get_temp(void);
+uint32_t SPI1_BMP280_get_press(void);
 void SPI1_start_communication(void);
 void SPI1_end_communication(void);
+
 // USART specific functions
 char USART1_RX(void);
 void USART1_TX(char c);
