@@ -49,18 +49,24 @@ void SPI1_transmit(uint8_t byte)
 
     // transmit byte via SPI
     SPI1->DR = byte;
+
+    // wait until BSY is reset (SPI busy communicating or TX buffer is not empty)
+    while(SPI1->SR & SPI_SR_BSY);
+
+    // clear overrun flag (discards received data during transmission)
+    SPI1->SR &= ~SPI_SR_OVR;
 }
 
 uint8_t SPI1_receive(void)
 {
-    uint8_t byte;
+    uint8_t byte = 0xFF;
 
-    // wait until SPI1 is not busy anymore
-    while(SPI1->SR & SPI_SR_BSY);
     // send nonsense data during reception
-    SPI1->DR = 0x0;
-    // wait until transmition is finished (TX register empty)
-    while(!(SPI1->SR & SPI_SR_TXE));
+    SPI1_transmit(0x00);
+    
+    // wait for reception register to not be empty and SPI not to be busy
+    while(!(SPI1->SR & SPI_SR_RXNE));
+    while(SPI1->DR & SPI_SR_BSY);
 
     // receive byte from SPI1
     byte = SPI1->DR;
@@ -106,13 +112,13 @@ uint8_t SPI1_BMP280_get_id(void)
 {
     // send command to transmit chip id (adress 0xD0)
     // MSB is used as R/W bit (W=0, R=1); for reading MSB can be left as is
-    uint8_t chip_id =0xD0;
+    uint8_t chip_id;
 
     // begin SPI1 communication
     SPI1_start_communication();
 
     // get result from BMP280 sensor
-    chip_id = SPI1_read_byte(chip_id);
+    chip_id = SPI1_read_byte(0xD0);
 
     // end SPI1 communication
     SPI1_end_communication();
@@ -139,12 +145,12 @@ void SPI1_BMP280_get_data(void)
 
 uint32_t SPI1_BMP280_get_temp(void)
 {
-
+    return 0;
 }
 
 uint32_t SPI1_BMP280_get_press(void)
 {
-
+    return 0;
 }
 
 void SPI1_start_communication(void)

@@ -68,11 +68,6 @@ void USART1_TX(char c)
 
     // wait until transmission is completed
     while(!(USART1->SR & USART_SR_TC));
-
-    if(USART1->SR & USART_SR_TC)
-    {
-        GPIOC->ODR ^= GPIO_ODR_OD13;
-    }
 }
 
 void USARTConfig(void)
