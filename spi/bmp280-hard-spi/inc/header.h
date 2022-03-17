@@ -39,6 +39,7 @@ uint8_t SPI1_BMP280_get_id(void);
 void SPI1_BMP280_set_ctrl_meas(uint8_t mode, uint8_t osrs_p, uint8_t osrs_t);
 void SPI1_BMP280_set_config(uint8_t spi3w_en, uint8_t filter, uint8_t t_sb);
 void SPI1_BMP280_reset(void);
+uint8_t SPI1_BMP280_is_busy(void);
 void SPI1_BMP280_get_data(void);
 uint32_t SPI1_BMP280_get_temp(uint8_t digits);
 uint32_t SPI1_BMP280_get_press(uint8_t digits);
@@ -48,5 +49,6 @@ char USART1_RX(void);
 void USART1_TX(char c);
 void USART1_SendString(char *str);
 void USART1_SendHex(uint8_t val);
+void USART1_SendDec(uint32_t val);
 
 #endif // HEADER_H_INCLUDED

@@ -47,6 +47,13 @@ void USART1_SendHex(uint8_t val)
     USART1_TX(ch);
 }
 
+void USART1_SendDec(uint32_t val)
+{
+    char str[10];       // max digits of decimal 32b is 10
+    itoa(val, str, 10); // 10 means base 10 (decimal)
+    USART1_SendString(str);
+}
+
 char USART1_RX(void)
 {
     char c;

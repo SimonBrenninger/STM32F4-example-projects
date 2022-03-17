@@ -85,7 +85,15 @@ void SPI1_BMP280_reset(void)
     // reset BMP280
     SPI1_BMP280_write_byte(BMP280_RESET, BMP280_RESET_VAL);
     // wait until BMP280 is ready
-    while(SPI1_BMP280_read_byte(BMP280_STATUS) & BMP280_STATUS_IM_UPDATE);
+    while(SPI1_BMP280_is_busy());
+}
+
+uint8_t SPI1_BMP280_is_busy(void)
+{
+    uint8_t temp = SPI1_BMP280_read_byte(BMP280_STATUS);
+    // measuring and/or im_update are '1' if sensor is busy
+    return ((temp & BMP280_STATUS_MEASURING) || 
+            (temp & BMP280_STATUS_IM_UPDATE));
 }
 
 void SPI1_BMP280_get_data(void)
@@ -118,11 +126,11 @@ uint32_t SPI1_BMP280_get_temp(uint8_t digits)
     temp |= temp_ptr[0];
     temp <<= 8;
     temp |= temp_ptr[1];
-    temp <<= 8;
 
     // use xlsb byte if 'digits' is greater than 16
     if(digits > 16)
     {
+        temp <<= 8;
         // copy xlsb to temp variable
         temp |= temp_ptr[2];
         // since xslb bits start at bit 4 shift right 4 times
@@ -134,7 +142,7 @@ uint32_t SPI1_BMP280_get_temp(uint8_t digits)
     // free memory allocated to temp_ptr
     free(temp_ptr);
     temp_ptr = NULL;
-    return 0;
+    return temp;
 }
 
 uint32_t SPI1_BMP280_get_press(uint8_t digits)
