@@ -28,12 +28,20 @@ uint8_t SPI1_transceive(uint8_t byte);
 uint8_t SPI1_read_byte(uint8_t addr);
 uint8_t *SPI1_read_bytes(uint8_t addr, uint8_t num_bytes);
 void SPI1_write_byte(uint8_t addr, uint8_t data);
+
+// BMP280 specific functions
+void SPI1_BMP280_start(void);
+void SPI1_BMP280_end(void);
+uint8_t SPI1_BMP280_read_byte(uint8_t addr);
+uint8_t *SPI1_BMP280_read_bytes(uint8_t addr, uint8_t num_bytes);
+void SPI1_BMP280_write_byte(uint8_t addr, uint8_t data);
 uint8_t SPI1_BMP280_get_id(void);
+void SPI1_BMP280_set_ctrl_meas(uint8_t mode, uint8_t osrs_p, uint8_t osrs_t);
+void SPI1_BMP280_set_config(uint8_t spi3w_en, uint8_t filter, uint8_t t_sb);
+void SPI1_BMP280_reset(void);
 void SPI1_BMP280_get_data(void);
-uint32_t SPI1_BMP280_get_temp(void);
-uint32_t SPI1_BMP280_get_press(void);
-void SPI1_start_communication(void);
-void SPI1_end_communication(void);
+uint32_t SPI1_BMP280_get_temp(uint8_t digits);
+uint32_t SPI1_BMP280_get_press(uint8_t digits);
 
 // USART specific functions
 char USART1_RX(void);

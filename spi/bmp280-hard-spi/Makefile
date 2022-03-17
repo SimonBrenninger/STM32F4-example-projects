@@ -4,13 +4,16 @@ TARGET = hard-spi
 BUILD_DIR = build
 
 # Source files
-C_SOURCES  = src/main.c
-C_SOURCES += src/rcc.c
-C_SOURCES += src/gpio.c
-C_SOURCES += src/spi.c
-C_SOURCES += src/usart.c
-C_SOURCES += src/timer.c
-C_SOURCES += drivers/src/system_stm32f4xx.c
+C_SOURCES  = \
+src/main.c \
+src/rcc.c \
+src/gpio.c \
+src/spi.c \
+src/usart.c \
+src/timer.c \
+src/bmp280.c \
+drivers/src/system_stm32f4xx.c
+
 ASM_SOURCES = drivers/src/startup_stm32f411xe.s
 
 PREFIX = arm-none-eabi-
@@ -22,7 +25,8 @@ HEX = $(CP) -O ihex
 BIN = $(CP) -O binary -S
 
 # mcu
-MCU = -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
+MCU = -mcpu=cortex-m4 -mthumb \
+-mfpu=fpv4-sp-d16 -mfloat-abi=hard
 
 # C defines
 C_DEFS =  \
@@ -42,7 +46,8 @@ CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -Og -g -Wall -fdata-sections -ffunction-
 # link script
 LDSCRIPT = drivers/ld/STM32F411CEUx_FLASH.ld
 
-LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+LDFLAGS = $(MCU) -specs=nano.specs -specs=nosys.specs -T$(LDSCRIPT) \
+-Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # default action: build all
 all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin

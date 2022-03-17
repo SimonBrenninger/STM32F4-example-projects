@@ -1,6 +1,6 @@
 #include "header.h"
 
-void sleep(uint32_t delay)
+void sleep(volatile uint32_t delay)
 {
 	while(delay--);
 }
@@ -16,6 +16,9 @@ int main(void)
 	TIMConfig();
 
 	USART1_SendString("BMP280 hard-SPI Example\r\n");
+
+	USART1_SendString("resetting BMP280...\r\n");
+	SPI1_BMP280_reset();
 
 	data = SPI1_BMP280_get_id();
 

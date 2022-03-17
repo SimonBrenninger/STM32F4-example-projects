@@ -2,22 +2,23 @@
 #define BMP280_H_INCLUDED
 
 // BMP280 specific registers
-#define BMP280_BASE         0x88
+#define BMP280_BASE         (0x88)
 #define BMP280_CALIB_BASE   BMP280_BASE                 /* 0x88 */
-#define BMP280_ID_BASE      (BMP280_BASE + 0x42)        /* 0xD0 */
+#define BMP280_PRESS_BASE   (0xF7)                      /* 0xF7 */
+#define BMP280_TEMP_BASE    (0xFA)                      /* 0xFA */
 
 #define BMP280_CALIB(a)     (BMP280_CALIB_BASE + a)     /* 0x88 + a */
-#define BMP280_ID           (BMP280_ID_BASE)            /* 0xD0 */
-#define BMP280_RESET        (BMP280_ID_BASE + 0x10)     /* 0xE0 */
-#define BMP280_STATUS       (BMP280_ID_BASE + 0x23)     /* 0xF3 */
-#define BMP280_CTRL_MEAS    (BMP280_ID_BASE + 0x24)     /* 0xF4 */
-#define BMP280_CONFIG       (BMP280_ID_BASE + 0x25)     /* 0xF5 */
-#define BMP280_PRESS_MSB    (BMP280_ID_BASE + 0x27)     /* 0xF7 */
-#define BMP280_PRESS_LSB    (BMP280_ID_BASE + 0x28)     /* 0xF8 */
-#define BMP280_PRESS_XLSB   (BMP280_ID_BASE + 0x29)     /* 0xF9 */
-#define BMP280_TEMP_MSB     (BMP280_ID_BASE + 0x2A)     /* 0xFA */
-#define BMP280_TEMP_LSB     (BMP280_ID_BASE + 0x2B)     /* 0xFB */
-#define BMP280_TEMP_XLSB    (BMP280_ID_BASE + 0x2C)     /* 0xFC */
+#define BMP280_ID           (0xD0)                      /* 0xD0 */
+#define BMP280_RESET        (0xE0)                      /* 0xE0 */
+#define BMP280_STATUS       (0xF3)                      /* 0xF3 */
+#define BMP280_CTRL_MEAS    (0xF4)                      /* 0xF4 */
+#define BMP280_CONFIG       (0xF5)                      /* 0xF5 */
+#define BMP280_PRESS_MSB    (0xF7)                      /* 0xF7 */
+#define BMP280_PRESS_LSB    (0xF8)                      /* 0xF8 */
+#define BMP280_PRESS_XLSB   (0xF9)                      /* 0xF9 */
+#define BMP280_TEMP_MSB     (0xFA)                      /* 0xFA */
+#define BMP280_TEMP_LSB     (0xFB)                      /* 0xFB */
+#define BMP280_TEMP_XLSB    (0xFC)                      /* 0xFC */
 
 // BMP280 bit definitions
 

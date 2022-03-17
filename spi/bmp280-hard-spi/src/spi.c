@@ -11,9 +11,9 @@ void SPIConfig(void)
     SPI1->CR1 &= ~SPI_CR1_DFF;
     // set SPI mode to full-duplex
     SPI1->CR1 &= ~SPI_CR1_RXONLY;
-    // set baud rate (SPI clock divider) to / 4 (6,25MHz) (0b001)
+    // set baud rate (SPI clock divider) to / 8 (3,125MHz) (0b010)
     SPI1->CR1 &= ~SPI_CR1_BR;
-    SPI1->CR1 |=  SPI_CR1_BR_0;
+    SPI1->CR1 |=  SPI_CR1_BR_1;
     // set CPOL and CPHA to '0'
     SPI1->CR1 &= ~(SPI_CR1_CPOL | SPI_CR1_CPHA);
     // set LSBFISRT to '0' (transmit MSB first)
@@ -94,61 +94,4 @@ void SPI1_write_byte(uint8_t addr, uint8_t data)
     // to given address
     SPI1_transceive(addr);
     SPI1_transceive(data);
-}
-
-uint8_t SPI1_BMP280_get_id(void)
-{
-    // send command to transmit chip id (adress 0xD0)
-    // MSB is used as R/W bit (W=0, R=1); for reading MSB can be left as is
-    uint8_t chip_id;
-
-    // begin SPI1 communication
-    SPI1_start_communication();
-
-    // get result from BMP280 sensor
-    chip_id = SPI1_read_byte(0xD0);
-
-    // end SPI1 communication
-    SPI1_end_communication();
-
-    // return value
-    return chip_id;
-}
-
-void SPI1_BMP280_get_data(void)
-{
-    // start SPI communication
-    SPI1_start_communication();
-
-    SPI1_BMP280_get_temp();
-    SPI1_BMP280_get_press();
-
-    // end SPI communication
-    SPI1_end_communication();
-
-    // use calibration data to compute correct values
-
-    USART1_SendString("current temperature is: \n\r");
-}
-
-uint32_t SPI1_BMP280_get_temp(void)
-{
-    return 0;
-}
-
-uint32_t SPI1_BMP280_get_press(void)
-{
-    return 0;
-}
-
-void SPI1_start_communication(void)
-{
-    // begin SPI1 communication by setting CS low
-    GPIOA->ODR &= ~SPI1_CS;
-}
-
-void SPI1_end_communication(void)
-{
-    // end SPI1 communication by setting CS high
-    GPIOA->ODR |= SPI1_CS;
 }
