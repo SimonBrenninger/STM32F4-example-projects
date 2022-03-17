@@ -44,21 +44,7 @@ int main(void)
 
 	while(1)
 	{
-		// force single measurement with mode[1:0] = 0b01 / 0b10
-		// osrs_p = x0 (0b000); osrs_t = x1 (0b001)
-		SPI1_BMP280_set_ctrl_meas(0b01, 0b000, 0b001);
-
-		// wait until measuring and im_update are cleared
-		// (bit 3 & 0 of status register 0xF3)
-		while(SPI1_BMP280_is_busy());
-
-		// burst readout (start @ address 0xF7 up to 0xFC)
-		temp = SPI1_BMP280_get_temp(16);
-
-		USART1_SendDec(temp);
-		USART1_SendString("\r\n\n");
-
-		while(1);
+		// do nothing
 	}
 }
 

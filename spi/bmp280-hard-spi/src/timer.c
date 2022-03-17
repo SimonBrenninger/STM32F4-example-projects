@@ -8,11 +8,16 @@ void TIM5_IRQHandler(void)
     }
 
     // start next temp & pressure measurement
-    SPI1_BMP280_get_data();
+    // burst readout (start @ address 0xF7 up to 0xFC)
+    uint32_t temp = SPI1_BMP280_get_temp(16);
+
+    USART1_SendDec(temp);
+    USART1_SendString("\r\n\n");
 }
 
 void TIMConfig(void)
 {
+    RCC->APB1ENR |= RCC_APB1ENR_TIM5EN;
     // configure TIM5 to measure temperature
     // and pressure every 1 second
 

@@ -116,6 +116,15 @@ uint32_t SPI1_BMP280_get_temp(uint8_t digits)
 {
     uint32_t temp = 0;
     uint8_t *temp_ptr = NULL;
+    
+    // force single measurement with mode[1:0] = 0b01 / 0b10
+    // osrs_p = x0 (0b000); osrs_t = x1 (0b001)
+    SPI1_BMP280_set_ctrl_meas(0b01, 0b000, 0b001);
+
+    // wait until measuring and im_update are cleared
+    // (bit 3 & 0 of status register 0xF3)
+    while(SPI1_BMP280_is_busy());
+
 
     // get temperature using burst readout (read from 0xFA to 0xFC at once)
     // receive 3 bytes (msb, lsb & xlsb) starting with 0xFA (MSB)
