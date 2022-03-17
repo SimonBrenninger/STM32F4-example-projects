@@ -42,44 +42,31 @@ void SPIConfig(void)
  * disable SPI with SPE = 0 & disable SPI periph clock
 */
 
-void SPI1_transmit(uint8_t byte)
+uint8_t SPI1_transceive(uint8_t tx_byte)
 {
     // wait until previous transmition is finished (TX register empty)
     while(!(SPI1->SR & SPI_SR_TXE));
 
     // transmit byte via SPI
-    SPI1->DR = byte;
+    SPI1->DR = tx_byte;
 
     // wait until BSY is reset (SPI busy communicating or TX buffer is not empty)
     while(SPI1->SR & SPI_SR_BSY);
-
-    // clear overrun flag (discards received data during transmission)
-    SPI1->SR &= ~SPI_SR_OVR;
-}
-
-uint8_t SPI1_receive(void)
-{
-    uint8_t byte = 0xFF;
-
-    // send nonsense data during reception
-    SPI1_transmit(0x00);
-    
-    // wait for reception register to not be empty and SPI not to be busy
     while(!(SPI1->SR & SPI_SR_RXNE));
-    while(SPI1->DR & SPI_SR_BSY);
 
     // receive byte from SPI1
-    byte = SPI1->DR;
+    tx_byte = SPI1->DR;
 
     // return received byte
-    return byte;
+    return tx_byte;
 }
 
 uint8_t SPI1_read_byte(uint8_t addr)
 {
-    // transmit addr over SPI1 and return received data
-    SPI1_transmit(addr);
-    return SPI1_receive();
+    // first transmit address over SPI
+    SPI1_transceive(addr);
+    // and during reception send some dummy data
+    return SPI1_transceive(0x00);
 }
 
 uint8_t *SPI1_read_bytes(uint8_t addr, uint8_t num_bytes)
@@ -88,12 +75,13 @@ uint8_t *SPI1_read_bytes(uint8_t addr, uint8_t num_bytes)
     uint8_t *data = malloc(0);
 
     // first transmit starting address
-    SPI1_transmit(addr);
+    SPI1_transceive(addr);
 
     while(num_allocd < num_bytes)
     {
         data = realloc(data, ++num_allocd * sizeof(uint8_t));
-        data[num_allocd-1] = SPI1_receive();
+        // during reception send dummy data
+        data[num_allocd-1] = SPI1_transceive(0x00);
     }
 
     //return byte-pointer
@@ -104,8 +92,8 @@ void SPI1_write_byte(uint8_t addr, uint8_t data)
 {
     // transmit addr over SPI1 and write value of 'data'
     // to given address
-    SPI1_transmit(addr);
-    SPI1_transmit(data);
+    SPI1_transceive(addr);
+    SPI1_transceive(data);
 }
 
 uint8_t SPI1_BMP280_get_id(void)

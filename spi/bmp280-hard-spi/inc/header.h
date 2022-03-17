@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include "stm32f411xe.h"
+#include "bmp280.h"
 
 // pin definitons for SPI interface
 #define SPI1_CS   GPIO_ODR_OD3  // PA3
@@ -23,8 +24,7 @@ void USARTConfig(void);
 void TIMConfig(void);
 
 // SPI specific functions
-void SPI1_transmit(uint8_t byte);
-uint8_t SPI1_receive(void);
+uint8_t SPI1_transceive(uint8_t byte);
 uint8_t SPI1_read_byte(uint8_t addr);
 uint8_t *SPI1_read_bytes(uint8_t addr, uint8_t num_bytes);
 void SPI1_write_byte(uint8_t addr, uint8_t data);

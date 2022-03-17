@@ -23,7 +23,7 @@ int main(void)
 	USART1_SendHex(data);
 	USART1_SendString(": ");
 
-	if(data == 0x58)
+	if(data == BMP280_ID_VAL)
 	{
 		USART1_SendString("Read correct chip id\r\n\n");
 	}
@@ -32,9 +32,21 @@ int main(void)
 		USART1_SendString("Wrong chip id!\r\n\n");
 	}
 
+	// configure measurement of BMP280
+
+	// oversampling = ultra low power
+	// osrs_p = x0 (0b000); osrs_t = x1 (0b001)
+
+	// IIR filter off (filter[2:0])
+
 	while(1)
 	{
-		// do nothing
+		// force single measurement with mode[1:0] = 0b01 / 0b10
+
+		// wait until measuring and im_update are cleared
+		// (bit 3 & 0 of status register 0xF3)
+
+		// burst readout (start @ address 0xF7 up to 0xFC)
 	}
 }
 

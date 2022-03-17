@@ -1,4 +1,4 @@
-TARGET = blink
+TARGET = hard-spi
 
 # Build path
 BUILD_DIR = build
