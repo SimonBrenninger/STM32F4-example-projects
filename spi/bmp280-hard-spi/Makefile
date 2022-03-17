@@ -101,3 +101,6 @@ flash-usb: all
 
 flash-stlink: all
 	st-flash write $(BUILD_DIR)/$(TARGET).bin 0x08000000
+
+debug:
+	gdb-multiarch $(BUILD_DIR)/$(TARGET).elf -x dbg/init.gdb
