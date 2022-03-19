@@ -1,5 +1,7 @@
 #include "header.h"
 
+uint8_t interval_passed = 0;
+
 void sleep(volatile uint32_t delay)
 {
 	while(delay--);
@@ -8,7 +10,17 @@ void sleep(volatile uint32_t delay)
 int main(void)
 {
 	uint8_t data;
-	uint32_t temp;
+	// initialize bmp280 configuration structure
+	struct bmp280_conf_t bmp280_conf = {
+		.filter   = BMP280_FILTER_DISABLE,
+		.mode     = BMP280_MODE_FORCED,
+		.osrs_p   = BMP280_OSRS_P_SKIP,
+		.osrs_t   = BMP280_OSRS_T_OSRS_1,
+		.spi3w_en = BMP280_SPI3W_EN_DISABLE,
+		.t_sb	  = BMP280_T_SB_0_5_MS
+	};
+	struct bmp280_calib_t bmp280_calib;
+	struct bmp280_raw_t bmp280_raw;
 
 	RCCConfig();
 	GPIOConfig();
@@ -18,11 +30,7 @@ int main(void)
 
 	USART1_SendString("BMP280 hard-SPI Example\r\n");
 
-	data = SPI1_BMP280_get_id();
-
-	USART1_SendString("0x");
-	USART1_SendHex(data);
-	USART1_SendString(": ");
+	data = SPI1_BMP280_read_byte(BMP280_ID);
 
 	if(data == BMP280_ID_VAL)
 	{
@@ -34,17 +42,16 @@ int main(void)
 	}
 
 	// configure measurement of BMP280
+	SPI1_BMP280_config(&bmp280_conf);
 
-	// oversampling = ultra low power
-	// osrs_p = x0 (0b000); osrs_t = x1 (0b001)
-	SPI1_BMP280_set_ctrl_meas(0b00, 0b000, 0b001);
-
-	// IIR filter off (filter[2:0])
-	SPI1_BMP280_set_config(0b0, 0b000, 0b000);
-
-	while(1)
+	while(1);
 	{
-		// do nothing
+		// start next temp & pressure measurement
+		// burst readout (start @ address 0xF7 up to 0xFC)
+		uint32_t temp = SPI1_BMP280_get_temp(16);
+
+		USART1_SendDec(temp);
+		USART1_SendString("\r\n\n");
 	}
 }
 

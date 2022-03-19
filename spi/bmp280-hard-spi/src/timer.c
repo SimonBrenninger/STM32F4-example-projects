@@ -7,12 +7,8 @@ void TIM5_IRQHandler(void)
         TIM5->SR &= ~TIM_SR_UIF;
     }
 
-    // start next temp & pressure measurement
-    // burst readout (start @ address 0xF7 up to 0xFC)
-    uint32_t temp = SPI1_BMP280_get_temp(16);
-
-    USART1_SendDec(temp);
-    USART1_SendString("\r\n\n");
+    // set flag interval_passed to start next measurement
+    interval_passed = 1;
 }
 
 void TIMConfig(void)

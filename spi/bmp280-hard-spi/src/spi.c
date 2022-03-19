@@ -69,13 +69,13 @@ uint8_t SPI1_read_byte(uint8_t addr)
     return SPI1_transceive(0x00);
 }
 
-uint8_t *SPI1_read_bytes(uint8_t addr, uint8_t num_bytes)
+uint8_t *SPI1_read_bytes(uint8_t start_addr, uint8_t num_bytes)
 {
     int num_allocd = 0;
     uint8_t *data = malloc(0);
 
     // first transmit starting address
-    SPI1_transceive(addr);
+    SPI1_transceive(start_addr);
 
     while(num_allocd < num_bytes)
     {
@@ -94,4 +94,17 @@ void SPI1_write_byte(uint8_t addr, uint8_t data)
     // to given address
     SPI1_transceive(addr);
     SPI1_transceive(data);
+}
+
+void SPI1_write_bytes(uint8_t start_addr, uint8_t *data_ptr, uint8_t num_bytes)
+{
+    int idx = 0;
+    // first transmit starting address
+    SPI1_transceive(start_addr);
+
+    while(idx < num_bytes)
+    {
+        // send data over SPI byte after byte
+        SPI1_transceive(data_ptr[idx]);
+    }
 }
