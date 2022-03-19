@@ -48,6 +48,32 @@ int main(void)
     // get calibration data
     SPI1_BMP280_get_calib(&bmp280_conf, &bmp280_calib);
 
+    USART1_SendString("\r\nDIG T1: ");
+    USART1_SendDec(bmp280_calib.dig_t1);
+    USART1_SendString("\r\nDIG T2: ");
+    USART1_SendDec(bmp280_calib.dig_t2);
+    USART1_SendString("\r\nDIG T3: ");
+    USART1_SendDec(bmp280_calib.dig_t3);
+    USART1_SendString("\r\nDIG P1: ");
+    USART1_SendDec(bmp280_calib.dig_p1);
+    USART1_SendString("\r\nDIG P2: ");
+    USART1_SendDec(bmp280_calib.dig_p2);
+    USART1_SendString("\r\nDIG P3: ");
+    USART1_SendDec(bmp280_calib.dig_p3);
+    USART1_SendString("\r\nDIG P4: ");
+    USART1_SendDec(bmp280_calib.dig_p4);
+    USART1_SendString("\r\nDIG P5: ");
+    USART1_SendDec(bmp280_calib.dig_p5);
+    USART1_SendString("\r\nDIG P6: ");
+    USART1_SendDec(bmp280_calib.dig_p6);
+    USART1_SendString("\r\nDIG P7: ");
+    USART1_SendDec(bmp280_calib.dig_p7);
+    USART1_SendString("\r\nDIG P8: ");
+    USART1_SendDec(bmp280_calib.dig_p8);
+    USART1_SendString("\r\nDIG P9: ");
+    USART1_SendDec(bmp280_calib.dig_p9);
+    USART1_SendString("\r\n\n");
+
     while(1);
     {
         // start next temp & pressure measurement

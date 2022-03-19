@@ -213,7 +213,7 @@ uint8_t SPI1_BMP280_is_busy(void);
 void SPI1_BMP280_get_data(void);
 uint32_t SPI1_BMP280_get_temp(uint8_t digits);
 uint32_t SPI1_BMP280_get_press(uint8_t digits);
-uint32_t SPI1_BMP280_get_calib(bmp280_conf_t *bmp280_conf_ptr, bmp280_calib_t *bmp280_calib_ptr);
+void SPI1_BMP280_get_calib(bmp280_conf_t *bmp280_conf_ptr, bmp280_calib_t *bmp280_calib_ptr);
 
 
 #endif // BMP280_H_INCLUDED

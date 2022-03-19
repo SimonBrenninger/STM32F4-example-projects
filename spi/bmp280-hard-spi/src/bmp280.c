@@ -152,15 +152,26 @@ uint32_t SPI1_BMP280_get_press(uint8_t digits)
     return 0;
 }
 
-uint32_t SPI1_BMP280_get_calib(bmp280_conf_t *bmp280_conf_ptr, bmp280_calib_t *bmp280_calib_ptr)
+void SPI1_BMP280_get_calib(bmp280_conf_t *bmp280_conf_ptr, bmp280_calib_t *bmp280_calib_ptr)
 {
     uint8_t *calib_ptr = NULL;
     // read register content @ address 0x88 -> 0x9F (24 byte)
     calib_ptr = SPI1_BMP280_read_bytes(BMP280_CALIB_BASE, BMP280_CALIB_SIZE);
 
-    
+    // copy MSB & LSB calibration data from calib_ptr into calibration structure
+    bmp280_calib_ptr->dig_t1 = ((calib_ptr[BMP280_DIG_T1_MSB_Pos] << 8 ) | calib_ptr[BMP280_DIG_T1_LSB_Pos]);
+    bmp280_calib_ptr->dig_t2 = ((calib_ptr[BMP280_DIG_T2_MSB_Pos] << 8 ) | calib_ptr[BMP280_DIG_T2_LSB_Pos]);
+    bmp280_calib_ptr->dig_t3 = ((calib_ptr[BMP280_DIG_T3_MSB_Pos] << 8 ) | calib_ptr[BMP280_DIG_T3_LSB_Pos]);
+    bmp280_calib_ptr->dig_p1 = ((calib_ptr[BMP280_DIG_P1_MSB_Pos] << 8 ) | calib_ptr[BMP280_DIG_P1_LSB_Pos]);
+    bmp280_calib_ptr->dig_p2 = ((calib_ptr[BMP280_DIG_P2_MSB_Pos] << 8 ) | calib_ptr[BMP280_DIG_P2_LSB_Pos]);
+    bmp280_calib_ptr->dig_p3 = ((calib_ptr[BMP280_DIG_P3_MSB_Pos] << 8 ) | calib_ptr[BMP280_DIG_P3_LSB_Pos]);
+    bmp280_calib_ptr->dig_p4 = ((calib_ptr[BMP280_DIG_P4_MSB_Pos] << 8 ) | calib_ptr[BMP280_DIG_P4_LSB_Pos]);
+    bmp280_calib_ptr->dig_p5 = ((calib_ptr[BMP280_DIG_P5_MSB_Pos] << 8 ) | calib_ptr[BMP280_DIG_P5_LSB_Pos]);
+    bmp280_calib_ptr->dig_p6 = ((calib_ptr[BMP280_DIG_P6_MSB_Pos] << 8 ) | calib_ptr[BMP280_DIG_P6_LSB_Pos]);
+    bmp280_calib_ptr->dig_p7 = ((calib_ptr[BMP280_DIG_P7_MSB_Pos] << 8 ) | calib_ptr[BMP280_DIG_P7_LSB_Pos]);
+    bmp280_calib_ptr->dig_p8 = ((calib_ptr[BMP280_DIG_P8_MSB_Pos] << 8 ) | calib_ptr[BMP280_DIG_P8_LSB_Pos]);
+    bmp280_calib_ptr->dig_p9 = ((calib_ptr[BMP280_DIG_P9_MSB_Pos] << 8 ) | calib_ptr[BMP280_DIG_P9_LSB_Pos]);
     
     free(calib_ptr);
     calib_ptr = NULL;
-    return 0;
 }
