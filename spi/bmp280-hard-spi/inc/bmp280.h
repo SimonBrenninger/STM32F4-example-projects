@@ -24,29 +24,55 @@
 
 // BMP280_CALIB bit definitions
 #define BMP280_DIG_T1_LSB               BMP280_CALIB(0)
-#define BMP280_DIG_T1_MSB               BMP280_CALIB(0)
-#define BMP280_DIG_T2_LSB               BMP280_CALIB(1)
-#define BMP280_DIG_T2_MSB               BMP280_CALIB(1)
-#define BMP280_DIG_T3_LSB               BMP280_CALIB(2)
-#define BMP280_DIG_T3_MSB               BMP280_CALIB(2)
-#define BMP280_DIG_P1_LSB               BMP280_CALIB(3)
-#define BMP280_DIG_P1_MSB               BMP280_CALIB(3)
-#define BMP280_DIG_P2_LSB               BMP280_CALIB(4)
-#define BMP280_DIG_P2_MSB               BMP280_CALIB(4)
-#define BMP280_DIG_P3_LSB               BMP280_CALIB(5)
-#define BMP280_DIG_P3_MSB               BMP280_CALIB(5)
-#define BMP280_DIG_P4_LSB               BMP280_CALIB(6)
-#define BMP280_DIG_P4_MSB               BMP280_CALIB(6)
-#define BMP280_DIG_P5_LSB               BMP280_CALIB(7)
-#define BMP280_DIG_P5_MSB               BMP280_CALIB(7)
-#define BMP280_DIG_P6_LSB               BMP280_CALIB(8)
-#define BMP280_DIG_P6_MSB               BMP280_CALIB(8)
-#define BMP280_DIG_P7_LSB               BMP280_CALIB(9)
-#define BMP280_DIG_P7_MSB               BMP280_CALIB(9)
-#define BMP280_DIG_P8_LSB               BMP280_CALIB(10)
-#define BMP280_DIG_P8_MSB               BMP280_CALIB(10)
-#define BMP280_DIG_P9_LSB               BMP280_CALIB(11)
-#define BMP280_DIG_P9_MSB               BMP280_CALIB(11)
+#define BMP280_DIG_T1_MSB               BMP280_CALIB(1)
+#define BMP280_DIG_T2_LSB               BMP280_CALIB(2)
+#define BMP280_DIG_T2_MSB               BMP280_CALIB(3)
+#define BMP280_DIG_T3_LSB               BMP280_CALIB(4)
+#define BMP280_DIG_T3_MSB               BMP280_CALIB(5)
+#define BMP280_DIG_P1_LSB               BMP280_CALIB(6)
+#define BMP280_DIG_P1_MSB               BMP280_CALIB(7)
+#define BMP280_DIG_P2_LSB               BMP280_CALIB(8)
+#define BMP280_DIG_P2_MSB               BMP280_CALIB(9)
+#define BMP280_DIG_P3_LSB               BMP280_CALIB(10)
+#define BMP280_DIG_P3_MSB               BMP280_CALIB(11)
+#define BMP280_DIG_P4_LSB               BMP280_CALIB(12)
+#define BMP280_DIG_P4_MSB               BMP280_CALIB(13)
+#define BMP280_DIG_P5_LSB               BMP280_CALIB(14)
+#define BMP280_DIG_P5_MSB               BMP280_CALIB(15)
+#define BMP280_DIG_P6_LSB               BMP280_CALIB(16)
+#define BMP280_DIG_P6_MSB               BMP280_CALIB(17)
+#define BMP280_DIG_P7_LSB               BMP280_CALIB(18)
+#define BMP280_DIG_P7_MSB               BMP280_CALIB(19)
+#define BMP280_DIG_P8_LSB               BMP280_CALIB(20)
+#define BMP280_DIG_P8_MSB               BMP280_CALIB(21)
+#define BMP280_DIG_P9_LSB               BMP280_CALIB(22)
+#define BMP280_DIG_P9_MSB               BMP280_CALIB(23)
+
+
+#define BMP280_DIG_T1_LSB_Pos           (0)
+#define BMP280_DIG_T1_MSB_Pos           (1)
+#define BMP280_DIG_T2_LSB_Pos           (2)
+#define BMP280_DIG_T2_MSB_Pos           (3)
+#define BMP280_DIG_T3_LSB_Pos           (4)
+#define BMP280_DIG_T3_MSB_Pos           (5)
+#define BMP280_DIG_P1_LSB_Pos           (6)
+#define BMP280_DIG_P1_MSB_Pos           (7)
+#define BMP280_DIG_P2_LSB_Pos           (8)
+#define BMP280_DIG_P2_MSB_Pos           (9)
+#define BMP280_DIG_P3_LSB_Pos           (10)
+#define BMP280_DIG_P3_MSB_Pos           (11)
+#define BMP280_DIG_P4_LSB_Pos           (12)
+#define BMP280_DIG_P4_MSB_Pos           (13)
+#define BMP280_DIG_P5_LSB_Pos           (14)
+#define BMP280_DIG_P5_MSB_Pos           (15)
+#define BMP280_DIG_P6_LSB_Pos           (16)
+#define BMP280_DIG_P6_MSB_Pos           (17)
+#define BMP280_DIG_P7_LSB_Pos           (18)
+#define BMP280_DIG_P7_MSB_Pos           (19)
+#define BMP280_DIG_P8_LSB_Pos           (20)
+#define BMP280_DIG_P8_MSB_Pos           (21)
+#define BMP280_DIG_P9_LSB_Pos           (22)
+#define BMP280_DIG_P9_MSB_Pos           (23)
 #define BMP280_CALIB_SIZE               (24)
 
 // BMP280_ID bit definitions
@@ -144,16 +170,16 @@
 
 // BMP280 structures
 
-struct bmp280_conf_t {
+typedef struct bmp280_conf_t {
     uint8_t mode;
-    uint8_t osrs_p;
-    uint8_t osrs_t;
+    uint8_t osrs_press;
+    uint8_t osrs_temp;
     uint8_t t_sb;
     uint8_t filter;
     uint8_t spi3w_en;
-};
+}bmp280_conf_t;
 
-struct bmp280_calib_t {
+typedef struct bmp280_calib_t {
     uint16_t dig_t1;
     int16_t dig_t2;
     int16_t dig_t3;
@@ -166,12 +192,12 @@ struct bmp280_calib_t {
     int16_t dig_p7;
     int16_t dig_p8;
     int16_t dig_p9;
-};
+}bmp280_calib_t;
 
-struct bmp280_raw_t {
+typedef struct bmp280_raw_t {
     uint32_t temp;
     uint32_t press;
-};
+}bmp280_raw_t;
 
 // BMP280 specific functions
 void SPI1_BMP280_start(void);
@@ -181,13 +207,13 @@ uint8_t *SPI1_BMP280_read_bytes(uint8_t start_addr, uint8_t num_bytes);
 void SPI1_BMP280_write_byte(uint8_t addr, uint8_t data);
 void SPI1_BMP280_write_bytes(uint8_t start_addr, uint8_t *data, uint8_t num_bytes);
 uint8_t SPI1_BMP280_get_id(void);
-void SPI1_BMP280_config(struct bmp280_conf_t *bmp280_conf_ptr);
+void SPI1_BMP280_config(bmp280_conf_t *bmp280_conf_ptr);
 void SPI1_BMP280_reset(void);
 uint8_t SPI1_BMP280_is_busy(void);
 void SPI1_BMP280_get_data(void);
 uint32_t SPI1_BMP280_get_temp(uint8_t digits);
 uint32_t SPI1_BMP280_get_press(uint8_t digits);
-uint32_t SPI1_BMP280_get_calib(void);
+uint32_t SPI1_BMP280_get_calib(bmp280_conf_t *bmp280_conf_ptr, bmp280_calib_t *bmp280_calib_ptr);
 
 
 #endif // BMP280_H_INCLUDED

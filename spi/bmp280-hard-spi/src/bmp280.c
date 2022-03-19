@@ -64,15 +64,15 @@ uint8_t SPI1_BMP280_get_id(void)
     return chip_id;
 }
 
-void SPI1_BMP280_config(struct bmp280_conf_t *bmp280_conf_ptr)
+void SPI1_BMP280_config(bmp280_conf_t *bmp280_conf_ptr)
 {
     // check that BMP280 is ready
     while(SPI1_BMP280_is_busy());
 
     // write to ctrl_meas and config register
     // write to ctrl_meas register
-    SPI1_BMP280_write_byte(BMP280_CTRL_MEAS, ((bmp280_conf_ptr->osrs_t << BMP280_OSRS_T_Pos) |
-                                              (bmp280_conf_ptr->osrs_p << BMP280_OSRS_P_Pos) |
+    SPI1_BMP280_write_byte(BMP280_CTRL_MEAS, ((bmp280_conf_ptr->osrs_temp << BMP280_OSRS_T_Pos) |
+                                              (bmp280_conf_ptr->osrs_press << BMP280_OSRS_P_Pos) |
                                               (bmp280_conf_ptr->mode << BMP280_MODE_Pos)));
     // write temp to BMP280
     SPI1_BMP280_write_byte(BMP280_CONFIG, ((bmp280_conf_ptr->t_sb << BMP280_T_SB_Pos) |
@@ -147,19 +147,20 @@ uint32_t SPI1_BMP280_get_temp(uint8_t digits)
 
 uint32_t SPI1_BMP280_get_press(uint8_t digits)
 {
-    //uint8_t *press_ptr = NULL;
-
     // get pressure using burst readout (read from 0xF7 to 0xF9 at once)
     // receive 3 bytes (msb, lsb & xlsb) starting with 0xF7 (MSB)
-    //press_ptr = SPI1_BMP280_read_bytes(BMP280_PRESS_BASE, 3);
     return 0;
 }
 
-uint32_t SPI1_BMP280_get_calib(void)
+uint32_t SPI1_BMP280_get_calib(bmp280_conf_t *bmp280_conf_ptr, bmp280_calib_t *bmp280_calib_ptr)
 {
     uint8_t *calib_ptr = NULL;
     // read register content @ address 0x88 -> 0x9F (24 byte)
     calib_ptr = SPI1_BMP280_read_bytes(BMP280_CALIB_BASE, BMP280_CALIB_SIZE);
+
     
+    
+    free(calib_ptr);
+    calib_ptr = NULL;
     return 0;
 }
