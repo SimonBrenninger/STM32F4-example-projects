@@ -1,12 +1,19 @@
 #include "header.h"
 
-void USART1_SendString(char *str)
+int _write(int handle, char* data, int len)
 {
+    USART1_SendString(data, len);
+    return len;
+}
+
+void USART1_SendString(char *str, int len)
+{
+    int idx=0;
     // loop through characters
-    while(*str != '\0')
+    while(idx < len)
     {
-        USART1_TX(*str);
-        str++;
+        USART1_TX(*(str+idx));
+        idx++;
     }
 }
 
@@ -51,7 +58,7 @@ void USART1_SendDec(uint32_t val)
 {
     char str[10];       // max digits of decimal 32b is 10
     itoa(val, str, 10); // 10 means base 10 (decimal)
-    USART1_SendString(str);
+    USART1_SendString(str, strlen(str));
 }
 
 char USART1_RX(void)

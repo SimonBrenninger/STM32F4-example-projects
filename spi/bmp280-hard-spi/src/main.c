@@ -2,14 +2,8 @@
 
 uint8_t interval_passed = 0;
 
-void sleep(volatile uint32_t delay)
-{
-    while(delay--);
-}
-
 int main(void)
 {
-    uint8_t data;
     int32_t temp;
     uint32_t press;
 
@@ -30,51 +24,47 @@ int main(void)
     SPIConfig();
     USARTConfig();
     TIMConfig();
+    
 
-    USART1_SendString("BMP280 hard-SPI Example\r\n");
+    printf("BMP280 hard-SPI Example\r\n");
 
-    data = SPI1_BMP280_read_byte(BMP280_ID);
-
-    if(data == BMP280_ID_VAL)
+    if(SPI1_BMP280_read_byte(BMP280_ID) == BMP280_ID_VAL)
     {
-        USART1_SendString("Read correct chip id\r\n\n");
+        printf("Read correct chip id\r\n\n");
     }
     else
     {
-        USART1_SendString("Wrong chip id!\r\n\n");
+        printf("Wrong chip id!\r\n\n");
     }
-
-    // configure measurement of BMP280
-    SPI1_BMP280_config(&bmp280_conf);
 
     // get calibration data
     SPI1_BMP280_get_calib(&bmp280_conf, &bmp280_calib);
 
-    // get raw data
-    SPI1_BMP280_get_raw(&bmp280_raw);
-    
-    USART1_SendString("raw pressure: ");
-    USART1_SendDec(bmp280_raw.press);
-    USART1_SendString("    raw temperature: ");
-    USART1_SendDec(bmp280_raw.temp);
-
-    // compute temperature
-    temp = BMP280_compute_temp(&bmp280_calib, &bmp280_raw);
-
-    // compute pressure
-    press = BMP280_compute_press(&bmp280_calib, &bmp280_raw);
-
-    USART1_SendString("    real pressure: ");
-    USART1_SendDec(press/2650);
-    USART1_SendString("    real temperature: ");
-    USART1_SendDec(temp);
-    USART1_SendString("\r\n");
-
-    while(1);
     while(1)
     {
-        // start next temp & pressure measurement
-        // burst readout (start @ address 0xF7 up to 0xFC)
+        if(interval_passed)
+        {
+            interval_passed = 0;
+            // start next temp & pressure measurement
+            
+            // start measurement of BMP280
+            SPI1_BMP280_config(&bmp280_conf);
+            
+            // get raw data
+            SPI1_BMP280_get_raw(&bmp280_raw);
+
+            // compute temperature
+            temp = BMP280_compute_temp(&bmp280_calib, &bmp280_raw);
+
+            // compute pressure
+            press = BMP280_compute_press(&bmp280_calib, &bmp280_raw);
+            
+            printf("raw pressure: %"PRIu32"\r\n", bmp280_raw.press);
+            printf("raw temperature: %"PRIu32"\r\n", bmp280_raw.temp);
+            
+            printf("real pressure: %"PRIu32"hPa\r\n", press/2650);
+            printf("real temperature: %"PRIu32"°C\r\n\n\n", temp);
+        }
     }
 }
 
@@ -85,5 +75,5 @@ int main(void)
  * solution: clear OVR (overrun) bit after transmittion to overwrite RX content
  * 
  * ToDo:
- * 
+ * convert float into two integers to send values over UART1
  */

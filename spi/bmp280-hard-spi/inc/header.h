@@ -2,6 +2,9 @@
 #define HEADER_H_INCLUDED
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <inttypes.h>
+#include <string.h>
 #include "stm32f411xe.h"
 #include "bmp280.h"
 
@@ -36,8 +39,9 @@ void SPI1_write_bytes(uint8_t start_addr, uint8_t *data_ptr, uint8_t num_bytes);
 // USART specific functions
 char USART1_RX(void);
 void USART1_TX(char c);
-void USART1_SendString(char *str);
+void USART1_SendString(char *str, int len);
 void USART1_SendHex(uint8_t val);
 void USART1_SendDec(uint32_t val);
+int _write(int handle, char* data, int len);
 
 #endif // HEADER_H_INCLUDED

@@ -26,7 +26,7 @@ BIN = $(CP) -O binary -S
 
 # mcu
 MCU = -mcpu=cortex-m4 -mthumb \
--mfpu=fpv4-sp-d16 -mfloat-abi=hard
+-mfpu=fpv4-sp-d16 -mfloat-abi=soft
 
 # C defines
 C_DEFS =  \
@@ -47,7 +47,7 @@ CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) -Og -g -Wall -fdata-sections -ffunction-
 LDSCRIPT = drivers/ld/STM32F411CEUx_FLASH.ld
 
 LDFLAGS = $(MCU) -specs=nano.specs -specs=nosys.specs -T$(LDSCRIPT) \
--Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+-Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections -u newlib
 
 # default action: build all
 all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
