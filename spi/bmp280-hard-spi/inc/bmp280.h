@@ -192,10 +192,11 @@ typedef struct bmp280_calib_t {
     int16_t dig_p7;
     int16_t dig_p8;
     int16_t dig_p9;
+    int32_t t_fine;
 }bmp280_calib_t;
 
 typedef struct bmp280_raw_t {
-    uint32_t temp;
+    int32_t temp;
     uint32_t press;
 }bmp280_raw_t;
 
@@ -210,9 +211,9 @@ uint8_t SPI1_BMP280_get_id(void);
 void SPI1_BMP280_config(bmp280_conf_t *bmp280_conf_ptr);
 void SPI1_BMP280_reset(void);
 uint8_t SPI1_BMP280_is_busy(void);
-void SPI1_BMP280_get_data(void);
-uint32_t SPI1_BMP280_get_temp(uint8_t digits);
-uint32_t SPI1_BMP280_get_press(uint8_t digits);
+void SPI1_BMP280_get_raw(bmp280_raw_t *bmp280_raw_ptr);
+int32_t BMP280_compute_temp(bmp280_calib_t *calib_ptr, bmp280_raw_t *raw_ptr);
+uint32_t BMP280_compute_press(bmp280_calib_t *calib_ptr, bmp280_raw_t *raw_ptr);
 void SPI1_BMP280_get_calib(bmp280_conf_t *bmp280_conf_ptr, bmp280_calib_t *bmp280_calib_ptr);
 
 

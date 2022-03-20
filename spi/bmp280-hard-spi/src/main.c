@@ -10,12 +10,14 @@ void sleep(volatile uint32_t delay)
 int main(void)
 {
     uint8_t data;
+    int32_t temp;
+    uint32_t press;
 
     // initialize bmp280 configuration structure
     bmp280_conf_t bmp280_conf = {
         .filter   	= BMP280_FILTER_DISABLE,
         .mode     	= BMP280_MODE_FORCED,
-        .osrs_press	= BMP280_OSRS_P_SKIP,
+        .osrs_press	= BMP280_OSRS_P_OSRS_1,
         .osrs_temp	= BMP280_OSRS_T_OSRS_1,
         .spi3w_en 	= BMP280_SPI3W_EN_DISABLE,
         .t_sb		= BMP280_T_SB_0_5_MS
@@ -48,40 +50,31 @@ int main(void)
     // get calibration data
     SPI1_BMP280_get_calib(&bmp280_conf, &bmp280_calib);
 
-    USART1_SendString("\r\nDIG T1: ");
-    USART1_SendDec(bmp280_calib.dig_t1);
-    USART1_SendString("\r\nDIG T2: ");
-    USART1_SendDec(bmp280_calib.dig_t2);
-    USART1_SendString("\r\nDIG T3: ");
-    USART1_SendDec(bmp280_calib.dig_t3);
-    USART1_SendString("\r\nDIG P1: ");
-    USART1_SendDec(bmp280_calib.dig_p1);
-    USART1_SendString("\r\nDIG P2: ");
-    USART1_SendDec(bmp280_calib.dig_p2);
-    USART1_SendString("\r\nDIG P3: ");
-    USART1_SendDec(bmp280_calib.dig_p3);
-    USART1_SendString("\r\nDIG P4: ");
-    USART1_SendDec(bmp280_calib.dig_p4);
-    USART1_SendString("\r\nDIG P5: ");
-    USART1_SendDec(bmp280_calib.dig_p5);
-    USART1_SendString("\r\nDIG P6: ");
-    USART1_SendDec(bmp280_calib.dig_p6);
-    USART1_SendString("\r\nDIG P7: ");
-    USART1_SendDec(bmp280_calib.dig_p7);
-    USART1_SendString("\r\nDIG P8: ");
-    USART1_SendDec(bmp280_calib.dig_p8);
-    USART1_SendString("\r\nDIG P9: ");
-    USART1_SendDec(bmp280_calib.dig_p9);
-    USART1_SendString("\r\n\n");
+    // get raw data
+    SPI1_BMP280_get_raw(&bmp280_raw);
+    
+    USART1_SendString("raw pressure: ");
+    USART1_SendDec(bmp280_raw.press);
+    USART1_SendString("    raw temperature: ");
+    USART1_SendDec(bmp280_raw.temp);
+
+    // compute temperature
+    temp = BMP280_compute_temp(&bmp280_calib, &bmp280_raw);
+
+    // compute pressure
+    press = BMP280_compute_press(&bmp280_calib, &bmp280_raw);
+
+    USART1_SendString("    real pressure: ");
+    USART1_SendDec(press/2650);
+    USART1_SendString("    real temperature: ");
+    USART1_SendDec(temp);
+    USART1_SendString("\r\n");
 
     while(1);
+    while(1)
     {
         // start next temp & pressure measurement
         // burst readout (start @ address 0xF7 up to 0xFC)
-        uint32_t temp = SPI1_BMP280_get_temp(16);
-
-        USART1_SendDec(temp);
-        USART1_SendString("\r\n\n");
     }
 }
 

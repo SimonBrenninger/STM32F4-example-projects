@@ -95,61 +95,58 @@ uint8_t SPI1_BMP280_is_busy(void)
     return ((temp & BMP280_MEASURING) || 
             (temp & BMP280_IM_UPDATE));
 }
-
-void SPI1_BMP280_get_data(void)
+void SPI1_BMP280_get_raw(bmp280_raw_t *bmp280_raw_ptr)
 {
-    // start SPI communication
-    SPI1_BMP280_start();
+    uint8_t *tmp_ptr = NULL;
+    bmp280_raw_ptr->press = 0;
+    bmp280_raw_ptr->temp = 0;
 
-    SPI1_BMP280_get_temp(16);
-    SPI1_BMP280_get_press(16);
+    // get raw temperature and pressure using burst readout (read from 0xF7 to 0xFC at once)
+    // receive 6 bytes (temp and press each msb, lsb & xlsb) starting with 0xF7 (MSB)
+    tmp_ptr = SPI1_BMP280_read_bytes(BMP280_PRESS_BASE, 6);
 
-    // end SPI communication
-    SPI1_BMP280_end();
-
-    // use calibration data to compute correct values
-
-    USART1_SendString("current temperature is: \n\r");
-}
-
-uint32_t SPI1_BMP280_get_temp(uint8_t digits)
-{
-    uint32_t temp = 0;
-    uint8_t *temp_ptr = NULL;
-
-    // get temperature using burst readout (read from 0xFA to 0xFC at once)
-    // receive 3 bytes (msb, lsb & xlsb) starting with 0xFA (MSB)
-    temp_ptr = SPI1_BMP280_read_bytes(BMP280_TEMP_BASE, 3);
-
-    // concatenate temp-pointer into one single temperature variable
-    // copy msb and lsb to temp variable
-    temp |= temp_ptr[0];
-    temp <<= 8;
-    temp |= temp_ptr[1];
-
-    // use xlsb byte if 'digits' is greater than 16
-    if(digits > 16)
-    {
-        temp <<= 8;
-        // copy xlsb to temp variable
-        temp |= temp_ptr[2];
-        // since xslb bits start at bit 4 shift right 4 times
-        temp >>= 4;
-        // 'remove' digits from temp variable that are missing from 20 bits
-        temp >>= (20 - digits);
-    }
+    // concatenate temp-pointer content (uint8_t) into one single temperature variable (uint32_t)
+    // copy msb, lsb and xlsb to temp variable
+    bmp280_raw_ptr->press  = ((tmp_ptr[0] << 12) | (tmp_ptr[1] << 4) | (tmp_ptr[2] >> 4));
+    bmp280_raw_ptr->temp = ((tmp_ptr[3] << 12) | (tmp_ptr[4] << 4) | (tmp_ptr[5] >> 4));
 
     // free memory allocated to temp_ptr
-    free(temp_ptr);
-    temp_ptr = NULL;
-    return temp;
+    free(tmp_ptr);
+    tmp_ptr = NULL;
 }
 
-uint32_t SPI1_BMP280_get_press(uint8_t digits)
+int32_t BMP280_compute_temp(bmp280_calib_t *calib_ptr, bmp280_raw_t *raw_ptr)
 {
-    // get pressure using burst readout (read from 0xF7 to 0xF9 at once)
-    // receive 3 bytes (msb, lsb & xlsb) starting with 0xF7 (MSB)
-    return 0;
+    int32_t var1, var2, calib_temp;
+
+    var1 = ((((raw_ptr->temp >> 3) - (((int32_t)calib_ptr->dig_t1) << 1))) * ((int32_t)calib_ptr->dig_t2)) >> 11;
+    var2 = (((((raw_ptr->temp >> 4) - ((int32_t)calib_ptr->dig_t1)) * ((raw_ptr->temp >> 4) - ((int32_t)calib_ptr->dig_t1))) >> 12) *
+        ((int32_t)calib_ptr->dig_t3)) >> 14;
+    calib_ptr->t_fine = var1 + var2;
+    calib_temp = (calib_ptr->t_fine * 5 + 128) >> 8;
+    return calib_temp;
+}
+
+uint32_t BMP280_compute_press(bmp280_calib_t *calib_ptr, bmp280_raw_t *raw_ptr)
+{
+    int64_t var1, var2, calib_press;
+    
+    var1 = ((int64_t)calib_ptr->t_fine) - 128000;
+    var2 = var1 * var1 * (int64_t)calib_ptr->dig_p6;
+    var2 = var2 + ((var1 * (int64_t)calib_ptr->dig_p5) << 17);
+    var2 = var2 + (((int64_t)calib_ptr->dig_p4) << 35);
+    var1 = ((var1 * var1 * (int64_t)calib_ptr->dig_p3) >> 8) + ((var1 * (int64_t)calib_ptr->dig_p2) << 12);
+    var1 = (((((int64_t)1) << 47) + var1)) * ((int64_t)calib_ptr->dig_p1) >> 33;
+    if (var1 == 0)
+    {
+    return 0; // avoid exception caused by division by zero
+    }
+    calib_press = 1048576 - raw_ptr->press;
+    calib_press = (((calib_press << 31) - var2) * 3125) / var1;
+    var1 = (((int64_t)calib_ptr->dig_p9) * (calib_press >> 13) * (calib_press >> 13)) >> 25;
+    var2 = (((int64_t)calib_ptr->dig_p8) * calib_press) >> 19;
+    calib_press = ((calib_press + var1 + var2) >> 8) + (((int64_t)calib_ptr->dig_p7) << 4);
+    return (uint32_t)calib_press;
 }
 
 void SPI1_BMP280_get_calib(bmp280_conf_t *bmp280_conf_ptr, bmp280_calib_t *bmp280_calib_ptr)
