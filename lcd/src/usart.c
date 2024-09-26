@@ -1,0 +1,131 @@
+#include <inttypes.h>
+#include "header.h"
+
+
+void usart_tx(char c);
+char usart_rx();
+
+void usart_send_dec(uint32_t val);
+void usart_send_hex(uint8_t val);
+void usart_send_string(char *str, int len);
+
+
+int _write(int handle, char* data, int len)
+{
+	usart_send_string(data, len);
+	return len;
+}
+
+void usart_send_string(char *str, int len)
+{
+	int idx=0;
+	// loop through characters
+	while(idx < len)
+	{
+		usart_tx(*(str+idx));
+		idx++;
+	}
+}
+
+void usart_send_hex(uint8_t val)
+{
+	uint8_t idx;
+	char ch = '0';
+
+	// loop through first half of byte
+	idx = 0x10;
+	while(idx != 0x00)
+	{
+		if(val & idx)
+		{
+			ch += (idx >> 4);
+		}
+		idx <<= 1;
+	}
+	if(ch > '9')
+		ch = 'A' + (ch-'9' - 1);
+	// print first character
+	usart_tx(ch);
+
+	ch = '0';
+	// loop through second half of byte
+	idx = 0x01;
+	while(idx != 0x10)
+	{
+		if(val & idx)
+		{
+			ch += idx;
+		}
+		idx <<= 1;
+	}
+	if(ch > '9')
+		ch = 'A' + (ch-'9' - 1);
+	// print second character
+	usart_tx(ch);
+}
+
+void usart_send_dec(uint32_t val)
+{
+	char str[10];       // max digits of decimal 32b is 10
+	itoa(val, str, 10); // 10 means base 10 (decimal)
+	usart_send_string(str, strlen(str));
+}
+
+char usart_rx(void)
+{
+	char c;
+	// wait until a character is recieved
+	while(!(USART1->SR & USART_SR_RXNE));
+
+	// read received character from data register DR
+	c = USART1->DR;
+	return c;
+}
+
+void usart_tx(char c)
+{
+	// wait until DR is empty
+	while(!(USART1->SR & USART_SR_TXE));
+
+	// write byte into data register DR
+	USART1->DR = c;
+
+	// wait until transmission is completed
+	while(!(USART1->SR & USART_SR_TC));
+}
+
+void usart_init(void)
+{
+	// enable USART1 clock (25MHz)
+	RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+
+	// enable USART1
+	USART1->CR1 |= USART_CR1_UE;
+
+	// 8 data bits (0b0)
+	USART1->CR1 &= ~USART_CR1_M;
+	// 0 parity bits (0b0)
+	USART1->CR1 &= ~USART_CR1_PCE;
+	// 1 stop bit (0b00)
+	USART1->CR2 &= ~USART_CR2_STOP_Msk;
+
+	/*          calculate baudrate
+	 * 
+	 * baud = f / (8 * (2-OVER8) * USARTDIV)
+	 * USARTDIV = f / (8 * (2-OVER8) * baud)
+	 * USARTDIV = 25MHz / (8 * (2-0) * 115200)
+	 * USARTDIV = 13.563
+	 * 
+	 * Mantissa = 0d13 = 0x0D
+	 * Fraction = 0d0.563 * 16 = 0d9 = 0x09
+	 */
+
+	// set mantissa
+	USART1->BRR &= ~USART_BRR_DIV_Mantissa_Msk;
+	USART1->BRR |= (0x0D << USART_BRR_DIV_Mantissa_Pos);
+	// set fraction
+	USART1->BRR &= ~USART_BRR_DIV_Fraction_Msk;
+	USART1->BRR |= (0x09 << USART_BRR_DIV_Fraction_Pos);
+	// enable RX and TX
+	USART1->CR1 |= (USART_CR1_RE | USART_CR1_TE);
+}
